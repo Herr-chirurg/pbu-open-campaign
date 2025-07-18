@@ -5,6 +5,7 @@ WEBHOOK_URL=$WEBHOOK_URL
 FILE=$FILE
 MAX_DISCORD_LEN=1900
 
+echo "📄 URL : $WEBHOOK_URL"
 echo "📄 Diffing file: $FILE"
 
 git diff HEAD^ HEAD -- "$FILE" \
