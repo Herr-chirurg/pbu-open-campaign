@@ -1,0 +1,30 @@
+name: Diff to Webhook
+
+on:
+  push:
+    branches: [main]  # Déclenche sur les pushes vers main
+
+jobs:
+  diff_and_notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2  # Nécessaire pour obtenir le commit précédent
+
+      - name: Générer le diff du fichier
+        id: diff
+        run: |
+          FILE="regles.md"
+          git diff HEAD^ HEAD -- $FILE > file.diff
+          echo "Diff extrait :"
+          cat file.diff
+          
+      - name: Envoyer le diff au webhook
+        run: |
+          WEBHOOK_URL="https://webhook.site/ton-url-de-test"
+          curl -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d @<(jq -n --arg diff "$(cat file.diff)" '{filename: "regles.md", diff: $diff}')
