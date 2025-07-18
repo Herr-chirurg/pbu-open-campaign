@@ -44,9 +44,9 @@ jobs:
             # Préparer le message avec le format Discord
             PAGE=$((i+1))
             MESSAGE="Diff pour \`$FILE\` (page $PAGE/$CHUNK_COUNT):
-\`\`\`diff
-$CHUNK
-\`\`\`"
+            \`\`\`diff
+            $CHUNK
+            \`\`\`"
           
             # Envoyer le message à Discord
             curl -s -X POST "$WEBHOOK_URL" \
