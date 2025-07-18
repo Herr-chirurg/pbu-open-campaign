@@ -1,8 +1,5 @@
 name: 'Send lightweight Git diff to Discord'
 description: 'Send added/removed lines of a specific file as a Discord-formatted diff'
-env:
-  webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
-  file: 'regles.md'
 runs:
   using: 'composite'
   steps:
