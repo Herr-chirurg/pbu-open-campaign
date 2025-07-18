@@ -7,7 +7,7 @@ inputs:
   file:
     description: 'Target file to diff'
     required: true
-    default: 'regles.md'
+    default: '.regles.md'
 runs:
   using: 'composite'
   steps:
