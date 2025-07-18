@@ -1,19 +1,10 @@
 name: 'Send lightweight Git diff to Discord'
 description: 'Send added/removed lines of a specific file as a Discord-formatted diff'
-
-jobs:
-  send-diff-to-discord:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Run discord-diff
-        run: |
-          echo "Webhook URL: $WEBHOOK_URL"
-          echo "File to diff: $FILE"
-          bash ${{ github.action_path }}/entrypoint.sh
-        env:
-          WEBHOOK_URL: 'https://discord.com/api/webhooks/1395666955201150986/-4CYXIpa5HsCyiXAS5vD1FmZ056xZDVnioNKf8RVPUgy1KIKZLW6v3KMiZr51xkDr5TQ'  # Utilise le secret pour plus de sécurité
-          FILE: 'regles.md'  # Ou remplace par l'input ${ inputs.file } si c'est dynamique
+env:
+  webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
+  file: 'regles.md'
+runs:
+  using: 'composite'
+  steps:
+    - shell: bash
+      run: ${{ github.action_path }}/entrypoint.sh
