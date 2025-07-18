@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-WEBHOOK_URL="${{ inputs.webhook_url }}"
+WEBHOOK_URL=$WEBHOOK_URL
 FILE="${{ inputs.file }}"
 MAX_DISCORD_LEN=1900
 
