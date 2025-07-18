@@ -24,14 +24,23 @@ jobs:
           
       - name: Envoyer le diff au webhook
         run: |
-          WEBHOOK_URL="https://discord.com/api/webhooks/1395666955201150986/-4CYXIpa5HsCyiXAS5vD1FmZ056xZDVnioNKf8RVPUgy1KIKZLW6v3KMiZr51xkDr5TQ"
-          FILE="file.diff"
-          MAX_DISCORD_LEN=1900  # Laisse de la marge pour le code block et les titres
+          WEBHOOK_URL="https://discord.com/api/webhooks/TON_ID/TON_TOKEN"
+          FILE="regles.md"
+          MAX_DISCORD_LEN=1900
           
-          # Lire le diff dans une variable
-          DIFF_CONTENT=$(cat "$FILE")
+          # 1. Obtenir la diff légère : uniquement lignes ajoutées/supprimées
+          # - ignorer les lignes commençant par '@' (en-têtes de bloc)
+          # - ignorer les lignes de contexte (sans + ou -)
+          # - conserver uniquement les lignes ajoutées/supprimées
+          git diff HEAD^ HEAD -- "$FILE" \
+            | grep -E '^[+-]' \
+            | grep -vE '^\+\+\+|^---' \
+            > filtered.diff
           
-          # Découper le contenu en morceaux de 1900 caractères
+          # 2. Lire le contenu dans une variable
+          DIFF_CONTENT=$(cat filtered.diff)
+          
+          # 3. Découper et paginer
           LENGTH=${#DIFF_CONTENT}
           CHUNK_COUNT=$(( (LENGTH + MAX_DISCORD_LEN - 1) / MAX_DISCORD_LEN ))
           
@@ -40,15 +49,20 @@ jobs:
             START=$(( i * MAX_DISCORD_LEN ))
             CHUNK="${DIFF_CONTENT:$START:$MAX_DISCORD_LEN}"
           
-            # Ajouter les blocs de code et le titre de page
+            # Préparer le message avec le format Discord
             PAGE=$((i+1))
-            MESSAGE="Diff (page ${PAGE}/${CHUNK_COUNT}):\n\`\`\`diff\n$CHUNK\n\`\`\`"
+            MESSAGE="Diff pour \`$FILE\` (page $PAGE/$CHUNK_COUNT):\n\`\`\`diff\n$CHUNK\n\`\`\`"
           
             # Envoyer le message à Discord
             curl -s -X POST "$WEBHOOK_URL" \
               -H "Content-Type: application/json" \
               -d @<(jq -n --arg content "$MESSAGE" '{content: $content}')
           
-            sleep 1  # petite pause pour éviter le rate-limit Discord (fortement conseillé)
+            sleep 1  # Évite le rate-limit
           done
+          
+          # 4. Message de confirmation
+          curl -s -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{"content": "Fin de la diff"}'
 
