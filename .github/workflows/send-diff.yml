@@ -20,6 +20,3 @@ jobs:
 
       - name: Run custom Discord diff action
         uses: ./.github/actions/discord-diff
-        env:
-          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
-          file: 'regles.md'
