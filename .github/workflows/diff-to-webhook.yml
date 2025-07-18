@@ -25,6 +25,30 @@ jobs:
       - name: Envoyer le diff au webhook
         run: |
           WEBHOOK_URL="https://discord.com/api/webhooks/1395666955201150986/-4CYXIpa5HsCyiXAS5vD1FmZ056xZDVnioNKf8RVPUgy1KIKZLW6v3KMiZr51xkDr5TQ"
-          curl -X POST "$WEBHOOK_URL" \
-            -H "Content-Type: application/json" \
-            -d @<(jq -n --arg diff "$(cat file.diff)" '{filename: "regles.md", diff: $diff}')
+          FILE="file.diff"
+          MAX_DISCORD_LEN=1900  # Laisse de la marge pour le code block et les titres
+          
+          # Lire le diff dans une variable
+          DIFF_CONTENT=$(cat "$FILE")
+          
+          # Découper le contenu en morceaux de 1900 caractères
+          LENGTH=${#DIFF_CONTENT}
+          CHUNK_COUNT=$(( (LENGTH + MAX_DISCORD_LEN - 1) / MAX_DISCORD_LEN ))
+          
+          for (( i=0; i<CHUNK_COUNT; i++ ))
+          do
+            START=$(( i * MAX_DISCORD_LEN ))
+            CHUNK="${DIFF_CONTENT:$START:$MAX_DISCORD_LEN}"
+          
+            # Ajouter les blocs de code et le titre de page
+            PAGE=$((i+1))
+            MESSAGE="Diff (page ${PAGE}/${CHUNK_COUNT}):\n\`\`\`diff\n$CHUNK\n\`\`\`"
+          
+            # Envoyer le message à Discord
+            curl -s -X POST "$WEBHOOK_URL" \
+              -H "Content-Type: application/json" \
+              -d @<(jq -n --arg content "$MESSAGE" '{content: $content}')
+          
+            sleep 1  # petite pause pour éviter le rate-limit Discord (fortement conseillé)
+          done
+
