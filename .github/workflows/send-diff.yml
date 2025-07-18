@@ -19,7 +19,7 @@ jobs:
         run: sudo apt-get install -y jq
 
       - name: Run custom Discord diff action
-        uses: ./.github/workflows
+        uses: ./.github/actions/discord-diff
         with:
           webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
           file: 'regles.md'
