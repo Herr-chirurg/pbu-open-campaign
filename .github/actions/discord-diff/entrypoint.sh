@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-WEBHOOK_URL=$WEBHOOK_URL
-FILE=$FILE
+WEBHOOK_URL="https://discord.com/api/webhooks/1395666955201150986/-4CYXIpa5HsCyiXAS5vD1FmZ056xZDVnioNKf8RVPUgy1KIKZLW6v3KMiZr51xkDr5TQ"
+FILE="regles.md"
 MAX_DISCORD_LEN=1900
 
 echo "📄 URL : $WEBHOOK_URL"
