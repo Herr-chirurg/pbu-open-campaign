@@ -2,7 +2,7 @@
 set -e
 
 WEBHOOK_URL=$WEBHOOK_URL
-FILE="${{ inputs.file }}"
+FILE=$FILE
 MAX_DISCORD_LEN=1900
 
 echo "📄 Diffing file: $FILE"
