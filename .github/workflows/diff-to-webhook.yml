@@ -14,14 +14,6 @@ jobs:
         with:
           fetch-depth: 2  # Nécessaire pour obtenir le commit précédent
 
-      - name: Générer le diff du fichier
-        id: diff
-        run: |
-          FILE="regles.md"
-          git diff HEAD^ HEAD -- $FILE > file.diff
-          echo "Diff extrait :"
-          cat file.diff
-          
       - name: Envoyer le diff au webhook
         run: |
           WEBHOOK_URL="https://discord.com/api/webhooks/1395666955201150986/-4CYXIpa5HsCyiXAS5vD1FmZ056xZDVnioNKf8RVPUgy1KIKZLW6v3KMiZr51xkDr5TQ"
