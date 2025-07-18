@@ -36,14 +36,18 @@ PAGE_NUM=1
 send_page() {
   if [ -z "$PAGE_CONTENT" ]; then return; fi
 
+  # On échappe les guillemets dans MESSAGE et on remplace les retours à la ligne
   MESSAGE="Diff pour \`$FILE\` (page $PAGE_NUM):\n\`\`\`diff
 $PAGE_CONTENT
 \`\`\`"
+  
+  # Échapper les guillemets pour éviter une erreur de formatage JSON
+  ESCAPED_MESSAGE=$(echo "$MESSAGE" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
 
   # Envoyer le message via webhook Discord
   curl -s -X POST "$WEBHOOK_URL" \
     -H "Content-Type: application/json" \
-    -d '{"content": "'"$MESSAGE"'"}'
+    -d "{\"content\":\"$ESCAPED_MESSAGE\"}"
 
   sleep 1
   PAGE_CONTENT=""
