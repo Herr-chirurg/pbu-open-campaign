@@ -24,7 +24,7 @@ jobs:
           
       - name: Envoyer le diff au webhook
         run: |
-          WEBHOOK_URL="https://webhook.site/ton-url-de-test"
+          WEBHOOK_URL="https://discord.com/api/webhooks/1395666955201150986/-4CYXIpa5HsCyiXAS5vD1FmZ056xZDVnioNKf8RVPUgy1KIKZLW6v3KMiZr51xkDr5TQ"
           curl -X POST "$WEBHOOK_URL" \
             -H "Content-Type: application/json" \
             -d @<(jq -n --arg diff "$(cat file.diff)" '{filename: "regles.md", diff: $diff}')
